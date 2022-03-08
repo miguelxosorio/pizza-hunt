@@ -1,0 +1,28 @@
+// mongoose dependencies
+const { Schema, model } = require('mongoose');
+
+// Schema constructor from mongoose
+// Using MongoDB and Mongoose, we simply instruct the schema that this data will adhere to the built-in JavaScript data types, including strings, Booleans, numbers
+const PizzaSchema = new Schema({
+    pizzaName: {
+        type: String
+    },
+    createdBy: {
+        type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    size: {
+        type: String,
+        default: 'Large'
+    },
+    toppings: []
+});
+
+// create the Pizza model using PizzaSchema
+const Pizza = model('Pizza', PizzaSchema);
+
+// export the Pizza model
+module.exports = Pizza;
