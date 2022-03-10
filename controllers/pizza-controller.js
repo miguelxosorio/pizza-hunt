@@ -52,8 +52,8 @@ const pizzaController = {
 
     // update pizza by id - PUT /api/pizzas/:id
     updatePizza({ params, body }, res) {
-        Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true }) // If we don't set that third parameter, { new: true }, it will return the original document. By setting the parameter to true, we're instructing Mongoose to return the new version of the document.
-        .then(dbPizzaData => {
+        Pizza.findOneAndUpdate({ _id: params.id }, body, { new: true, runValidators: true }) // If we don't set that third parameter, { new: true }, it will return the original document. By setting the parameter to true, we're instructing Mongoose to return the new version of the document.
+        .then(dbPizzaData => {                                                               // runValidators - We need to include this explicit setting when updating data so that it knows to validate any new information
             if(!dbPizzaData) {
                 res.status(404).json({ message: 'No pizza found with this id!' });
                 return;
