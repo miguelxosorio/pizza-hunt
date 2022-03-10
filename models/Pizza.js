@@ -47,8 +47,13 @@ const PizzaSchema = new Schema(
 // Virtuals allow you to add virtual properties to a document that aren't stored in the database
 // They're normally computed values that get evaluated when you try to access their properties
 PizzaSchema.virtual('commentCount').get(function() {
-    return this.comments.length;
-})
+    // using the .reduce() method to tally up the total of every comment with its replies
+    // .reduce() takes 2 params, an accumulator and a currentValue
+    // here the accumulator is total, and currentValue is comment
+    // as .reduce() walks through the array, it passes the accumulating total and the current value of comment into the function with the return of the function revising the total for the next iteration through the array
+    return this.comments.reduce((total, comment) => total + comment.replies.length + 1, 0);
+    // Then .reduce() is used to continually add on to a value within the scope of the method known as the accumulator, then divide by the length of the entire array. The built-in .reduce() method is great for calculating a value based off of the accumulation of values in an array
+});
 
 // create the Pizza model using PizzaSchema
 const Pizza = model('Pizza', PizzaSchema);
