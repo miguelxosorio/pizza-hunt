@@ -7,6 +7,13 @@ const pizzaController = {
     // get all pizzas - GET /api/pizzas
     getAllPizza(req, res) { // will serve as the callback function for the GET/api/pizzas route
         Pizza.find({})
+        .populate({             // MongoDB has a populate method to populate a field - pass an object with the key path plus the value of the field you want populated
+            path: 'comments',   // we are doing this because we're only seeing the comment ID in the pizza data
+            select: '-__v'      // Note that we also used the select option inside of populate(), so that we can tell Mongoose that we don't care about the __v field on comments either
+        })                      // The minus sign - in front of the field indicates that we don't want it to be returned.
+        .select('-__v')         // update the query to not include the pizza's __v field 
+        .sort({ _id: -1 })      // set up the query so that the newest pizza returns first
+                                // Mongoose has a .sort() method to help with this, .sort({ _id: -1 }) to sort in DESC order by the _id value. This gets the newest pizza because a timestamp value is hidden somewhere inside the MongoDB ObjectId
         .then(dbPizzaData => res.json(dbPizzaData))
         .catch(err => {
             console.log(err);
@@ -16,7 +23,12 @@ const pizzaController = {
 
     // get one pizza by id - GET /api/pizzas/:id
     getPizzaById({ params }, res) { // Instead of accessing the entire req we destructured params out of it because that's the only data we need for this req to be fulfilled
-        Pizza.findOne({ _id: params.id }) 
+        Pizza.findOne({ _id: params.id })
+        .populate({                 // populates the comment in the pizza data
+            path: 'comments', 
+            select: '-__v'
+        })
+        .select('-__v') 
         .then(dbPizzaData => {
             // if no pizza found, send 404
             if(!dbPizzaData) {
